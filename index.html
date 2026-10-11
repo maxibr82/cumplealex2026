@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#031722" />
+    <meta name="description" content="Invitación VIP al cumpleaños de Alexis. Abrí la tarjeta para ver la ubicación." />
+    <meta property="og:title" content="Feliz Cumpleaños Alexis" />
+    <meta property="og:description" content="Te invitamos al cumple de Alexis. Abrí tu invitación." />
+    <meta property="og:type" content="website" />
+    <!--
+      IMPORTANTE: reemplazá USUARIO y NOMBRE-REPO por los de tu publicación en GitHub Pages
+      (por ejemplo: https://maxi.github.io/cumple-alexis/)
+    -->
+    <meta property="og:url" content="https://USUARIO.github.io/NOMBRE-REPO/" />
+    <meta property="og:image" content="https://USUARIO.github.io/NOMBRE-REPO/tarjeta%20principal%20/IMG_9927.JPG" />
+    <meta property="og:image:width" content="843" />
+    <meta property="og:image:height" content="1264" />
+    <meta property="og:image:alt" content="Invitación al cumpleaños de Alexis" />
+    <link rel="canonical" href="https://USUARIO.github.io/NOMBRE-REPO/" />
+    <title>Feliz Cumpleaños Alexis</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%89%3C/text%3E%3C/svg%3E"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=Nunito:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body class="entry-mode">
+    <!-- Capas de atmósfera: bokeh, haces de luz y grano fílmico -->
+    <div class="atmosphere" aria-hidden="true">
+      <div class="bokeh-layer" id="bokehLayer"></div>
+      <div class="light-rays"></div>
+      <div class="stars-rain" id="starsRain"></div>
+      <div class="grain"></div>
+      <div class="vignette"></div>
+    </div>
+
+    <!-- Confeti con física (canvas) -->
+    <canvas id="confettiCanvas" class="confetti-canvas" aria-hidden="true"></canvas>
+
+    <!-- Modal de ingreso -->
+    <div class="entry-overlay" id="entryOverlay">
+      <!-- Animación de fondo de la pantalla de ingreso -->
+      <div class="entry-celebration" id="entryCeleb" aria-hidden="true"></div>
+
+      <div class="entry-modal" role="dialog" aria-modal="true" aria-labelledby="entryTitle">
+        <span class="entry-eyebrow">¡Hay una fiesta!</span>
+        <h1 class="entry-title" id="entryTitle">Te invitamos</h1>
+        <p class="entry-sub">Escribí tu nombre para abrir tu invitación</p>
+
+        <form class="entry-form" id="entryForm" novalidate>
+          <label class="sr-only" for="guestName">Tu nombre</label>
+          <input
+            id="guestName"
+            name="guestName"
+            type="text"
+            maxlength="30"
+            placeholder="Tu nombre"
+            autocomplete="name"
+            aria-describedby="entryError"
+          />
+          <button id="enterButton" type="submit">
+            <span class="btn-label">Abrir invitación</span>
+            <span class="btn-shine" aria-hidden="true"></span>
+          </button>
+        </form>
+
+        <p class="entry-error" id="entryError" role="alert"></p>
+      </div>
+    </div>
+
+    <!-- Globos de fondo -->
+    <div class="globos-bg" aria-hidden="true">
+      <div class="globo g1">
+        <svg viewBox="0 0 220 320" role="img" aria-label="globo animado">
+          <defs>
+            <radialGradient id="globoGrad1" cx="35%" cy="30%" r="70%">
+              <stop offset="0%" stop-color="#ffd7e6" />
+              <stop offset="35%" stop-color="#ff73a7" />
+              <stop offset="72%" stop-color="#ff3b91" />
+              <stop offset="100%" stop-color="#c80056" />
+            </radialGradient>
+            <linearGradient id="nudoGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ffd3e5" />
+              <stop offset="100%" stop-color="#9a004d" />
+            </linearGradient>
+          </defs>
+          <path class="hilo" d="M 110 200 Q 100 245 110 290" fill="none"></path>
+          <polygon class="nudo" points="103,193 117,193 110,206" fill="url(#nudoGrad1)"></polygon>
+          <path class="balloon-body" d="M 110 20 C 60 20 24 58 24 112 C 24 165 60 196 110 196 C 160 196 196 165 196 112 C 196 58 160 20 110 20 Z" fill="url(#globoGrad1)"></path>
+          <ellipse cx="84" cy="72" rx="19" ry="10" transform="rotate(-28 84 72)" fill="rgba(255,255,255,0.36)" />
+          <path d="M 74 72 C 84 58, 99 54, 117 71 C 100 84, 82 87, 74 72 Z" fill="rgba(255,255,255,0.14)" />
+        </svg>
+      </div>
+
+      <div class="globo g2">
+        <svg viewBox="0 0 220 320" role="img" aria-label="globo animado">
+          <defs>
+            <radialGradient id="globoGrad2" cx="35%" cy="30%" r="70%">
+              <stop offset="0%" stop-color="#fff4bf" />
+              <stop offset="35%" stop-color="#ffd54a" />
+              <stop offset="72%" stop-color="#f7b500" />
+              <stop offset="100%" stop-color="#ce7d00" />
+            </radialGradient>
+            <linearGradient id="nudoGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#fff2a8" />
+              <stop offset="100%" stop-color="#b57000" />
+            </linearGradient>
+          </defs>
+          <path class="hilo" d="M 110 200 Q 100 245 110 290" fill="none"></path>
+          <polygon class="nudo" points="103,193 117,193 110,206" fill="url(#nudoGrad2)"></polygon>
+          <path class="balloon-body" d="M 110 20 C 60 20 24 58 24 112 C 24 165 60 196 110 196 C 160 196 196 165 196 112 C 196 58 160 20 110 20 Z" fill="url(#globoGrad2)"></path>
+          <ellipse cx="86" cy="75" rx="20" ry="10" transform="rotate(-30 86 75)" fill="rgba(255,255,255,0.36)" />
+          <path d="M 75 78 C 88 63, 103 59, 120 80 C 104 91, 87 93, 75 78 Z" fill="rgba(255,255,255,0.14)" />
+        </svg>
+      </div>
+
+      <div class="globo g3">
+        <svg viewBox="0 0 220 320" role="img" aria-label="globo animado">
+          <defs>
+            <radialGradient id="globoGrad3" cx="35%" cy="30%" r="70%">
+              <stop offset="0%" stop-color="#ddfaff" />
+              <stop offset="35%" stop-color="#71d7ff" />
+              <stop offset="72%" stop-color="#1ca8ff" />
+              <stop offset="100%" stop-color="#0d4fbd" />
+            </radialGradient>
+            <linearGradient id="nudoGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#baf3ff" />
+              <stop offset="100%" stop-color="#1a5bb8" />
+            </linearGradient>
+          </defs>
+          <path class="hilo" d="M 110 200 Q 100 245 110 290" fill="none"></path>
+          <polygon class="nudo" points="103,193 117,193 110,206" fill="url(#nudoGrad3)"></polygon>
+          <path class="balloon-body" d="M 110 20 C 60 20 24 58 24 112 C 24 165 60 196 110 196 C 160 196 196 165 196 112 C 196 58 160 20 110 20 Z" fill="url(#globoGrad3)"></path>
+          <ellipse cx="82" cy="73" rx="19" ry="10" transform="rotate(-26 82 73)" fill="rgba(255,255,255,0.38)" />
+          <path d="M 74 72 C 87 58, 104 55, 120 74 C 103 86, 85 89, 74 72 Z" fill="rgba(255,255,255,0.14)" />
+        </svg>
+      </div>
+
+      <div class="globo g4">
+        <svg viewBox="0 0 220 320" role="img" aria-label="globo animado">
+          <defs>
+            <radialGradient id="globoGrad4" cx="35%" cy="30%" r="70%">
+              <stop offset="0%" stop-color="#fff2d6" />
+              <stop offset="35%" stop-color="#ffb347" />
+              <stop offset="72%" stop-color="#ff8a1d" />
+              <stop offset="100%" stop-color="#d96d00" />
+            </radialGradient>
+            <linearGradient id="nudoGrad4" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ffe8ba" />
+              <stop offset="100%" stop-color="#a34a00" />
+            </linearGradient>
+          </defs>
+          <path class="hilo" d="M 110 200 Q 100 245 110 290" fill="none"></path>
+          <polygon class="nudo" points="103,193 117,193 110,206" fill="url(#nudoGrad4)"></polygon>
+          <path class="balloon-body" d="M 110 20 C 60 20 24 58 24 112 C 24 165 60 196 110 196 C 160 196 196 165 196 112 C 196 58 160 20 110 20 Z" fill="url(#globoGrad4)"></path>
+          <ellipse cx="86" cy="72" rx="20" ry="10" transform="rotate(-30 86 72)" fill="rgba(255,255,255,0.35)" />
+          <path d="M 74 76 C 88 60, 103 57, 122 81 C 104 92, 86 94, 74 76 Z" fill="rgba(255,255,255,0.14)" />
+        </svg>
+      </div>
+
+      <div class="globo g5">
+        <svg viewBox="0 0 220 320" role="img" aria-label="globo animado">
+          <defs>
+            <radialGradient id="globoGrad5" cx="35%" cy="30%" r="70%">
+              <stop offset="0%" stop-color="#ebd9ff" />
+              <stop offset="35%" stop-color="#b37dff" />
+              <stop offset="72%" stop-color="#8f52ff" />
+              <stop offset="100%" stop-color="#5420bf" />
+            </radialGradient>
+            <linearGradient id="nudoGrad5" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#f0d8ff" />
+              <stop offset="100%" stop-color="#5b2eb2" />
+            </linearGradient>
+          </defs>
+          <path class="hilo" d="M 110 200 Q 100 245 110 290" fill="none"></path>
+          <polygon class="nudo" points="103,193 117,193 110,206" fill="url(#nudoGrad5)"></polygon>
+          <path class="balloon-body" d="M 110 20 C 60 20 24 58 24 112 C 24 165 60 196 110 196 C 160 196 196 165 196 112 C 196 58 160 20 110 20 Z" fill="url(#globoGrad5)"></path>
+          <ellipse cx="84" cy="72" rx="19" ry="10" transform="rotate(-26 84 72)" fill="rgba(255,255,255,0.33)" />
+          <path d="M 74 76 C 88 60, 104 57, 121 79 C 103 91, 86 92, 74 76 Z" fill="rgba(255,255,255,0.14)" />
+        </svg>
+      </div>
+
+      <div class="globo g6">
+        <svg viewBox="0 0 220 320" role="img" aria-label="globo animado">
+          <defs>
+            <radialGradient id="globoGrad6" cx="35%" cy="30%" r="70%">
+              <stop offset="0%" stop-color="#e8fff5" />
+              <stop offset="35%" stop-color="#8de6b6" />
+              <stop offset="72%" stop-color="#29b578" />
+              <stop offset="100%" stop-color="#1d775a" />
+            </radialGradient>
+            <linearGradient id="nudoGrad6" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#defee7" />
+              <stop offset="100%" stop-color="#1e6a52" />
+            </linearGradient>
+          </defs>
+          <path class="hilo" d="M 110 200 Q 100 245 110 290" fill="none"></path>
+          <polygon class="nudo" points="103,193 117,193 110,206" fill="url(#nudoGrad6)"></polygon>
+          <path class="balloon-body" d="M 110 20 C 60 20 24 58 24 112 C 24 165 60 196 110 196 C 160 196 196 165 196 112 C 196 58 160 20 110 20 Z" fill="url(#globoGrad6)"></path>
+          <ellipse cx="84" cy="73" rx="20" ry="10" transform="rotate(-28 84 73)" fill="rgba(255,255,255,0.34)" />
+          <path d="M 74 76 C 90 60, 103 58, 121 79 C 103 89, 85 93, 74 76 Z" fill="rgba(255,255,255,0.14)" />
+        </svg>
+      </div>
+    </div>
+
+    <div class="page-shell">
+      <div class="welcome-banner" id="welcomeBanner" aria-live="polite">Te invitamos</div>
+
+      <div class="scene" aria-label="Tarjeta de cumpleaños de Alexis">
+        <div class="light-glow glow-left" aria-hidden="true"></div>
+        <div class="light-glow glow-right" aria-hidden="true"></div>
+
+        <div class="peeking-characters" aria-hidden="true">
+          <span class="character c-one" style="--rot: -10deg; --delay: 0.62s">
+            <img src="imagenes personajes/pngegg.png" alt="" />
+          </span>
+          <span class="character c-two" style="--rot: -18deg; --delay: 0.7s">
+            <img src="imagenes personajes/pngegg-2.png" alt="" />
+          </span>
+          <span class="character c-three" style="--rot: 18deg; --delay: 0.78s">
+            <img src="imagenes personajes/pngegg-3.png" alt="" />
+          </span>
+          <span class="character c-four" style="--rot: 12deg; --delay: 0.86s">
+            <img src="imagenes personajes/pngegg-4.png" alt="" />
+          </span>
+          <span class="character c-five" style="--rot: -12deg; --delay: 0.94s">
+            <img src="imagenes personajes/pngwing.com-2.png" alt="" />
+          </span>
+          <span class="character c-six" style="--rot: 12deg; --delay: 1.02s">
+            <img src="imagenes personajes/pngwing.com-3.png" alt="" />
+          </span>
+        </div>
+
+        <div class="card-scene">
+          <div class="card-stage">
+            <div class="card-tilt" id="cardTilt">
+              <div
+                class="card"
+                id="birthdayCard"
+                tabindex="0"
+                role="button"
+                aria-pressed="false"
+                aria-label="Voltear la tarjeta para ver la dirección"
+              >
+                <div class="card-face card-front">
+                  <img src="tarjeta%20principal%20/IMG_9927.JPG" alt="Tarjeta de cumpleaños con la foto de Alexis" />
+                  <span class="card-glare" aria-hidden="true"></span>
+                  <span class="card-sheen" aria-hidden="true"></span>
+                </div>
+
+                <div class="card-face card-back">
+                  <div class="back-panel">
+                    <span class="mini-tag">Feliz cumple</span>
+                    <h2>Alexis</h2>
+
+                    <div class="countdown" id="countdown">
+                      <span class="countdown__label">Faltan</span>
+                      <span class="countdown__grid">
+                        <span class="cd-cell"><b id="cdDays">--</b><small>días</small></span>
+                        <span class="cd-cell"><b id="cdHours">--</b><small>hs</small></span>
+                        <span class="cd-cell"><b id="cdMins">--</b><small>min</small></span>
+                      </span>
+                      <span class="countdown__date">Sábado 14 de noviembre · 16:00 hs</span>
+                      <span class="countdown__today">¡Hoy es el día! 🎉</span>
+                      <span class="countdown__after">¡Gracias por festejar con Alexis! 🥳</span>
+                    </div>
+
+                    <p class="detail">
+                      <span class="detail-label">Dirección</span>
+                      Aplicación Vicor, Manzana 23, Lote 17
+                    </p>
+                    <div class="back-actions">
+                      <a
+                        class="btn btn-gold"
+                        href="https://maps.google.com/?q=-31.477087,-64.248009"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Ver ubicación
+                      </a>
+                      <button class="btn btn-ghost" id="shareButton" type="button">Compartir</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <span class="age-badge" aria-hidden="true"><b>3</b><small>añitos</small></span>
+          </div>
+
+          <div class="card-hint" aria-label="Tocar la tarjeta para girar">
+            <span class="card-hint__icon" aria-hidden="true">↻</span>
+            <span class="card-hint__text">Tocá la tarjeta para girar</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="music-toggle" id="musicToggle" type="button" aria-pressed="false" aria-label="Activar o pausar la música">
+      <span class="music-toggle__note" aria-hidden="true">♪</span>
+      <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      <span class="music-toggle__label">Música</span>
+    </button>
+
+    <audio id="birthdayMusic" src="MUSICA/the_mountain-happy-birthday-508020.mp3" loop preload="auto"></audio>
+
+    <script src="script.js"></script>
+  </body>
+</html>
